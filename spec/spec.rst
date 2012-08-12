@@ -8,7 +8,7 @@ Data Format
 The Universal Binary JSON specification utilizes a single binary tuple to
 represent all JSON data types (both value and container types)::
 
-  <type, 1-byte char>[<length, 1 or 4-byte integer>][<data>]
+    <type, 1-byte char>[<length, 1 or 4-byte integer>][<data>]
 
 Each element in the tuple is defined as:
 
@@ -41,8 +41,8 @@ The specifics of each data type will be spelled out down below for more clarity.
 
 The basic organization provided by this tuple (`type-length-data`) allows each
 JSON construct to be represented in a binary format that is simple to read and
-write without the need for complex/custom encodings or ``null``-termating bytes
-anywhere in the stream that has to be scanned for or references resolved.
+write without the need for complex/custom encodings or ``null``-terminating
+bytes anywhere in the stream that has to be scanned for or references resolved.
 
 .. _value_types:
 
@@ -201,9 +201,9 @@ This table shows the official definitions of the discrete value types:
 
 .. note::
 
-  The duplicate (lowercased) ``h`` and ``s`` types are just versions of those
-  types that allow for a 1-byte length (instead of 4-byte length) to be used for
-  more compact storage when length is ``<= 254``.
+   The duplicate (lowercased) ``h`` and ``s`` types are just versions of those
+   types that allow for a 1-byte length (instead of 4-byte length) to be used
+   for more compact storage when length is ``<= 254``.
 
 With each field of the table described as:
 
@@ -237,10 +237,10 @@ With each field of the table described as:
 
   .. note::
 
-    For example, English typically uses 1-byte per character, so the string
-    “hello” has a length of 5. The same string in Russian is “привет” with a
-    byte length of 12 and in Arabic the text becomes “مرحبا” with a byte length
-    of 10.
+     For example, English typically uses 1-byte per character, so the string
+     “hello” has a length of 5. The same string in Russian is “привет” with a
+     byte length of 12 and in Arabic the text becomes “مرحبا” with a byte length
+     of 10.
 
 * **Data?**
 
@@ -255,94 +255,94 @@ With each field of the table described as:
 
 .. note::
 
-  **Using Numeric Types**
+   **Using Numeric Types**
 
-  It is always recommended to use the smallest numeric type that fits your
-  needs. For data with a large amount of numeric data, this can cut down the
-  size of the payloads significantly (on average a **50% reduction in size**).
+   It is always recommended to use the smallest numeric type that fits your
+   needs. For data with a large amount of numeric data, this can cut down the
+   size of the payloads significantly (on average a **50% reduction in size**).
 
-  All numeric types are **signed**.
+   All numeric types are **signed**.
 
-  Numeric values of `infinity` are encoded as a `null` (``Z``) value.
-  (See `ECMA`_, See `JSON presentation`_)
+   Numeric values of `infinity` are encoded as a `null` (``Z``) value.
+   (See `ECMA`_, See `JSON presentation`_)
 
-  **64-bit Integers**
+   **64-bit Integers**
 
-  While almost all languages native support 64-bit integers, not all do
-  (e.g. C89 and JavaScript (`yet`_)) and care must be taken when encoding 64-bit
-  integer values into binary JSON then attempting to decode it on a platform
-  that doesn't support it.
+   While almost all languages native support 64-bit integers, not all do
+   (e.g. C89 and JavaScript (`yet`_)) and care must be taken when encoding
+   64-bit integer values into binary JSON then attempting to decode it on
+   a platform that doesn't support it.
 
-  If you are fully aware of the platforms and runtime environments your binary
-  JSON is being used on and know they all support 64-bit integers, then you are
-  fine.
+   If you are fully aware of the platforms and runtime environments your binary
+   JSON is being used on and know they all support 64-bit integers, then you are
+   fine.
 
-  If you are trying to deserialize 64-bit integers in a client’s browser in
-  JavaScript or another environment that does not support 64-bit integers, then
-  you will want to take care to skip them in the input or have the client
-  producing them encode them as `double` or `huge` values if that is easier to
-  handle.
+   If you are trying to deserialize 64-bit integers in a client’s browser in
+   JavaScript or another environment that does not support 64-bit integers, then
+   you will want to take care to skip them in the input or have the client
+   producing them encode them as `double` or `huge` values if that is easier to
+   handle.
 
-  Alternatively you might consider encoding your 64-bit values as doubles if you
-  know you are going from the server to a client JavaScript environment with the
-  binary-encoded information.
+   Alternatively you might consider encoding your 64-bit values as doubles
+   if you know you are going from the server to a client JavaScript environment
+   with the binary-encoded information.
 
-  **32-bit Floats**
+   **32-bit Floats**
 
-  All 32-bit float values are written into the binary format using the
-  `IEEE 754 single precision floating point format`_, which is the following
-  structure:
+   All 32-bit float values are written into the binary format using the
+   `IEEE 754 single precision floating point format`_, which is the following
+   structure:
 
-  * Bit 31 (1 bit) – sign
-  * Bit 30-23 (8 bits) – exponent
-  * Bit 22-0 (23 bits) – fraction (significand)
+   * Bit 31 (1 bit) – sign
+   * Bit 30-23 (8 bits) – exponent
+   * Bit 22-0 (23 bits) – fraction (significand)
 
-  **64-bit Doubles**
+   **64-bit Doubles**
 
-  All 64-bit double values are written into the binary format using the
-  `IEEE 754 double precision floating point format`_, which is the following
-  structure:
+   All 64-bit double values are written into the binary format using the
+   `IEEE 754 double precision floating point format`_, which is the following
+   structure:
 
-  * Bit 63 (1 bit) – sign
-  * Bit 62-52 (11 bits) – exponent
-  * Bit 51-0 (52 bits) – fraction (significand)
+   * Bit 63 (1 bit) – sign
+   * Bit 62-52 (11 bits) – exponent
+   * Bit 51-0 (52 bits) – fraction (significand)
 
-  **huge Numeric Type**
+   **huge Numeric Type**
 
-  The huge numeric type is a safe and portable way for representing
-  **values > 64-bit** by way of an UTF-8 encoded string. The format of this
-  string **must adhere** to the `JSON number specification`_.
+   The huge numeric type is a safe and portable way for representing
+   **values > 64-bit** by way of an UTF-8 encoded string. The format of this
+   string **must adhere** to the `JSON number specification`_.
 
-  This allows `huge` numbers to be portable across all platforms and easily
-  converted to/from JSON as well as more robust handling on platforms that may
-  not support arbitrarily large numbers.
+   This allows `huge` numbers to be portable across all platforms and easily
+   converted to/from JSON as well as more robust handling on platforms that may
+   not support arbitrarily large numbers.
 
-  If you are working on a platform that has no support for huge numbers, please
-  see our :ref:`Best Practices <best_practices>` recommendation on how to handle
-  them.
+   If you are working on a platform that has no support for huge numbers, please
+   see our :ref:`Best Practices <best_practices>` recommendation on how to handle
+   them.
 
-  It is considered a violation of this specification to store numeric
-  **values <= 64-bit** as a `huge`.
+   It is considered a violation of this specification to store numeric
+   **values <= 64-bit** as a `huge`.
 
-  This decision was made in order to simplify the parsing logic required to
-  process the Universal Binary JSON specification; there is no need to
-  introspect `huge` values to see if they contain smaller numeric values when
-  mapping UBJSON types to native types of the runtime environment.
+   This decision was made in order to simplify the parsing logic required to
+   process the Universal Binary JSON specification; there is no need to
+   introspect `huge` values to see if they contain smaller numeric values when
+   mapping UBJSON types to native types of the runtime environment.
 
-  The `huge` type should only be used when you need to (safely and portably)
-  represent **values > 64-bit**.
+   The `huge` type should only be used when you need to (safely and portably)
+   represent **values > 64-bit**.
 
-  **UTF-8 Encoding**
+   **UTF-8 Encoding**
 
-  The JSON specification does not dictate a specific required encoding, it does
-  however use UTF-8 as the default encoding.
+   The JSON specification does not dictate a specific required encoding, it does
+   however use UTF-8 as the default encoding.
 
-  The Universal Binary JSON specification dictates `UTF-8`_ as the
-  **required string encoding**. This will allow you to easily exchange binary
-  JSON between open systems that all follow this encoding requirement.
+   The Universal Binary JSON specification dictates `UTF-8`_ as the
+   **required string encoding**. This will allow you to easily exchange binary
+   JSON between open systems that all follow this encoding requirement.
 
-  Fortunately, this is ideal for `a multitude of reasons`_ like space efficiency
-  and compatibility across systems and alternative formats.
+   Fortunately, this is ideal for `a multitude of reasons`_ like space
+   efficiency and compatibility across systems and alternative formats.
 
 To further clarify the binary layout of these data types, below are some visual
 examples of what the bytes would look like inside of a binary JSON file.
@@ -418,7 +418,8 @@ The two JSON container types are described as follows:
    **Advanced**: This can actually be to your benefit. Take for example an array
    of `int64` values, as you are writing them out to a file or a stream, you can
    check the actual value of each `int64` and depending on the value, encode
-   each one into the smallest possible numeric type (e.g. `byte`, `int32`, etc.).
+   each one into the smallest possible numeric type
+   (e.g. `byte`, `int32`, etc.).
 
    This can lead to a significant size reduction (say **50% smaller**) in
    smaller numeric values!
@@ -435,14 +436,14 @@ minor modification: the length value is considered a count of the child elements
 the container holds. It does not mean the byte length of the child elements.
 
 .. note::
-  Exactly what *child element* means depends on the container. In an `object`, a
-  single child element is a name-value pair; in an `array`, a child element is a
-  single value.
+   Exactly what *child element* means depends on the container. In an `object`,
+   a single child element is a name-value pair; in an `array`, a child
+   element  is a single value.
 
 More specifically, the tuple stays exactly the same, it is just the meaning of
 the center `length` element that changes::
 
-  <type, 1-byte char>[<length, 1 or 4-byte integer>][<data>]
+    <type, 1-byte char>[<length, 1 or 4-byte integer>][<data>]
 
 All the code used to process the constructs defined by this specification stays
 the same, but when an `object` or `array` construct are encountered, the code
@@ -455,9 +456,9 @@ while the `length` argument for each array is 50 (because they each hold
 50 elements).
 
 .. note::
-  Unknown-length container types are also supported by the Universal Binary JSON
-  specification and are covered in detail in the :ref:`Streaming <streaming>`
-  section of this document.
+   Unknown-length container types are also supported by
+   the Universal Binary JSON specification and are covered in detail in
+   the :ref:`Streaming <streaming>` section of this document.
 
 Additionally, the only optional field in the tuple for container types is
 `data`, if the container is empty and contains no elements
@@ -483,11 +484,11 @@ like this:
 +-----------------+--------------------------+--------+---------+--------------+
 
 .. note::
-  `array` and `object` can also be specified in a more compact manner using
-  1-byte for the `length` when it is ``<= 254``. Specifying a `length` of
-  ``255`` for the 1-byte variants has a special meaning of **length unknown**
-  and is covered in more detail in the :ref:`Streaming <streaming>` section of
-  the spec.
+   `array` and `object` can also be specified in a more compact manner using
+   1-byte for the `length` when it is ``<= 254``. Specifying a `length` of
+   ``255`` for the 1-byte variants has a special meaning of **length unknown**
+   and is covered in more detail in the :ref:`Streaming <streaming>` section of
+   the spec.
 
 The details for each field are the same as described for the non-container
 values in the previous section with the one caveat that `length` is a count of
@@ -498,24 +499,29 @@ Let’s look at a quick example of encoding an object, again using the handy
 ``[ ]``-notation we used before simply for readability (the ``[ ]`` chars are
 not written out or part of the file format).
 
-Consider the following JSON (30-bytes compacted)::
+Consider the following JSON (30-bytes compacted):
 
-  {
-      "id": 1234567890,
-      "name": "bob"
-  }
+.. code-block:: javascript
+
+   {
+       "id": 1234567890,
+       "name": "bob"
+   }
 
 Storing that object in the Universal Binary JSON format would look like this
-(whitespace added for readability)::
+(whitespace added for readability):
 
-  [o][2] 2 bytes
-    [s][2][id][I][1234567890] 4 + 5 = 9 bytes
-    [s][4][name][s][3][bob]   6 + 5 = 11 bytes
+.. code-block:: text
+
+   [o][2] 2 bytes
+      [s][2][id][I][1234567890] 4 + 5 = 9 bytes
+      [s][4][name][s][3][bob]   6 + 5 = 11 bytes
 
 Our Universal Binary JSON format is 22 bytes, **27% smaller** than our compacted
 JSON!
 
-Walking through our example above, using a word-journey this is what a parser might see and do:
+Walking through our example above, using a word-journey this is what a parser
+might see and do:
 
 #. I see an ``o``, so I know I am parsing an `object` and that the next byte is
    the `length` (or count) for this object.
@@ -532,34 +538,38 @@ Walking through our example above, using a word-journey this is what a parser mi
    processed.
 #. I have just parsed 2 values, so now I know the `object` scope is closed.
 
-Encoding objects containing other `objects` would work identically except we would
-have encountered another ``o`` or ``O`` marker and descended a level further
-into a new object.
+Encoding objects containing other `objects` would work identically except we
+would have encountered another ``o`` or ``O`` marker and descended a level
+further into a new object.
 
 Let’s look at another example, this time a simple JSON array construct
 (remember, they only contain values and not name-value pairs like `objects`).
 
-This array is 48-bytes in compacted JSON::
+This array is 48-bytes in compacted JSON:
 
-  [
-    null,
-    true,
-    false,
-    4782345193,
-    153.132417549,
-    "ham"
-  ]
+.. code-block:: javascript
+
+   [
+     null,
+     true,
+     false,
+     4782345193,
+     153.132417549,
+     "ham"
+   ]
 
 Storing the array in the Universal Binary JSON format would look like this
-(whitespace added for readability)::
+(whitespace added for readability):
 
-  [a][6] - 2 bytes
-     [Z] - 1 byte
-     [T] - 1 byte
-     [F] - 1 byte
-     [I][4782345193] - 5 bytes
-     [D][153.132417549] - 9 bytes
-     [s][3][ham] - 5 bytes
+.. code-block:: text
+
+   [a][6] - 2 bytes
+      [Z] - 1 byte
+      [T] - 1 byte
+      [F] - 1 byte
+      [I][4782345193] - 5 bytes
+      [D][153.132417549] - 9 bytes
+      [s][3][ham] - 5 bytes
 
 Our Universal Binary JSON format is 24 bytes or **50% smaller** than the
 compacted JSON!
@@ -645,19 +655,19 @@ they are exchanging.
 
 In code that handles streaming from a server, your handler for the `noop` type
 might just reset a disconnect timer. In code that handles UBJ files, you would
-simply ignore the noop marker when you encountered it in the file because it
+simply ignore the `noop` marker when you encountered it in the file because it
 would mean nothing.
 
 .. warning::
 
-  The `noop` type is only defined to be used inside of an
-  :ref:`unknown-length container <unsized_container>`. If you have a
-  container that clearly defines a child element count (`length`) it should not
-  contain a `noop` marker element.
+   The `noop` type is only defined to be used inside of an
+   :ref:`unknown-length container <unsized_container>`. If you have a
+   container that clearly defines a child element count (`length`) it should not
+   contain a `noop` marker element.
 
-  Also, the `noop` type **should never** be sent inside of a value (e.g.
-  embedded inside of a `string` being streamed); it must only be written to the
-  stream between declared values.
+   Also, the `noop` type **should never** be sent inside of a value (e.g.
+   embedded inside of a `string` being streamed); it must only be written to the
+   stream between declared values.
 
 If your interaction with the Universal Binary JSON format is primarily as a file
 format, it is likely that you may never need to use the `noop` type; its value
@@ -688,33 +698,37 @@ follows:
 
 .. warning::
 
-  Using a length of ``0xFF`` with the uppercase, 4-byte-length versions of array
-  (``A``) and object (``O``) is not valid according to this specification.
-  You must use the 1-byte-length variants of the container types when specifying
-  an unknown `length`.
+   Using a length of ``0xFF`` with the uppercase, 4-byte-length versions of
+   array (``A``) and object (``O``) is not valid according to this
+   specification. You must use the 1-byte-length variants of the container types
+   when specifying an unknown `length`.
 
-An example would look like this::
+An example would look like this:
 
-  [a][255]
-     [S][3][bob]
-     [I][1024]
-     [T]
-     [F]
-     [S][4][ham!]
-  [E]
+.. code-block:: text
+
+   [a][255]
+      [S][3][bob]
+      [I][1024]
+      [T]
+      [F]
+      [S][4][ham!]
+   [E]
 
 The three key elements being the lowercased ``a`` marker, the length of ``0xFF``
 (255) and the ``E`` marker at the end of the container.
 
-Another example might look like this::
+Another example might look like this:
 
-  [o][255]
-     [B][4]
-     [D][21.786]
-     [N]
-     [Z]
-     [h][27][131.098412283059e2371293452]
-  [E]
+.. code-block:: text
+
+   [o][255]
+      [B][4]
+      [D][21.786]
+      [N]
+      [Z]
+      [h][27][131.098412283059e2371293452]
+   [E]
 
 You might notice in the example above we injected a `noop` instruction right in
 the middle, before the `null`. As mentioned in the :ref:`No-Op Type <noop>`
@@ -756,9 +770,9 @@ of your own data.
 
 .. warning::
 
-  The Universal Binary JSON specification does not use compression algorithms to
-  achieve smaller storage sizes. The size reduction is a side effect of the
-  efficient binary storage format.
+   The Universal Binary JSON specification does not use compression algorithms to
+   achieve smaller storage sizes. The size reduction is a side effect of the
+   efficient binary storage format.
 
 Size Reduction Tips
 -------------------
@@ -802,7 +816,7 @@ MIME Type
 The Universal Binary JSON specification is a binary format and recommends using
 the following mime type::
 
-  application/x-ubjson
+    application/x-ubjson
 
 This was added directly to the specification in hopes of avoiding
 `similar confusion with JSON`_.

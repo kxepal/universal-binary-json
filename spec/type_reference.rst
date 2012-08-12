@@ -88,8 +88,8 @@ String Encoding
 All `string` values (which includes `huge` values since they are string-encoded)
 must be `UTF-8`_ encoded.
 
-This provides a `number of advantages`_ and inter-compatibility across systems and
-alternative data formats.
+This provides a `number of advantages`_ and inter-compatibility across systems
+and alternative data formats.
 
 Arrays & Objects
 ================
@@ -109,9 +109,9 @@ For example:
 
 .. note::
 
-  Universal Binary JSON is a :ref:`streaming-friendly <streaming>` specification
-  and supports the use of :ref:`unknown-length container <unsized_container>`
-  types if you need them!
+   Universal Binary JSON is a :ref:`streaming-friendly <streaming>`
+   specification and supports the use of
+   :ref:`unknown-length container <unsized_container>` types if you need them!
 
 Support for ‘huge’ Numeric Type
 ===============================
@@ -122,19 +122,19 @@ that support them and degraded gracefully in systems that do not support them.
 
 .. note::
 
-  `huge` values are **only** meant to store values ``> 64-bit`` in size.
-  It is in violation of the Universal Binary JSON specification to store a value
-  ``<= 64-bits`` as a huge.
+   `huge` values are **only** meant to store values ``> 64-bit`` in size.
+   It is in violation of the Universal Binary JSON specification to store a
+   value ``<= 64-bits`` as a huge.
 
-  This design was chosen intentionally as it greatly simplifies (and optimizes)
-  the generation and parsing code for the UBJ format as no introspection of the
-  `huge` value is necessary for a platform to try and marshal them into a
-  smaller format.
+   This design was chosen intentionally as it greatly simplifies (and optimizes)
+   the generation and parsing code for the UBJ format as no introspection of the
+   `huge` value is necessary for a platform to try and marshal them into a
+   smaller format.
 
-  This way the parsing code becomes simple, either creating an arbitrarily large
-  number out of the value (e.g. `BigDecimal`_ in Java), returns an error to the
-  caller because of an unsupported type or optionally skips the unsupported data
-  and continues parsing.
+   This way the parsing code becomes simple, either creating an arbitrarily
+   large number out of the value (e.g. `BigDecimal`_ in Java),
+   returns an error to the caller because of an unsupported type or optionally
+   skips the unsupported data and continues parsing.
 
 `huge` values must be written out in accordance with the original
 `JSON number specification`_.
@@ -156,9 +156,9 @@ ASCII char. For example, ``a`` for `array`, ``s`` for `string` and so on.
 
 .. warning::
 
-  When using the compact representations of these different types, remember that
-  the `length` must be ``<= 254`` because the `length` of 255 (``0xFF``) has a
-  special meaning when it comes to `array` and `object` types.
+   When using the compact representations of these different types, remember
+   that the `length` must be ``<= 254`` because the `length` of 255 (``0xFF``)
+   has a special meaning when it comes to `array` and `object` types.
 
 noop and Streaming Support
 ==========================
@@ -173,20 +173,21 @@ polluting the actual data that was being exchanged.
 
 .. warning::
 
-  The `noop` type can be used for other purposes or signals as well, but it is
-  defined to have no value and no effect on the data it may be included in.
+   The `noop` type can be used for other purposes or signals as well, but it is
+   defined to have no value and no effect on the data it may be included in.
 
-  The `noop` type is meant to be sent between discrete values in a streaming
-  scenario and can never be sent inside of the byte-data that makes up a single
-  value.
+   The `noop` type is meant to be sent between discrete values in a streaming
+   scenario and can never be sent inside of the byte-data that makes up a single
+   value.
 
-  For example, if a server is writing a string “Hello World” back to the client,
-  the server must write the entire ``[s][11][Hello World]`` sequence back to the
-  client unbroken; a `noop` marker cannot be sent inside of that value.
+   For example, if a server is writing a string “Hello World” back to the
+   client, the server must write the entire ``[s][11][Hello World]`` sequence
+   back to the client unbroken; a `noop` marker cannot be sent inside of that
+   value.
 
-  `noop` markers must only be written between values being transmitted (e.g.
-  between values in an `array` or between the name and value pair inside of an
-  `object`).
+   `noop` markers must only be written between values being transmitted
+   (e.g. between values in an `array` or between the name and value pair
+   inside of an `object`).
 
 Examples
 ========
