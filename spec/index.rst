@@ -20,12 +20,12 @@ net big wins in both processing time and size reduction of stored information,
 which is where a binary JSON format becomes helpful.
 
 .. toctree::
-  :maxdepth: 3
+   :maxdepth: 3
 
-  spec.rst
-  type_reference.rst
-  libraries.rst
-  thanks.rst
+   spec.rst
+   type_reference.rst
+   libraries.rst
+   thanks.rst
 
 Why UBJSON?
 -----------
